@@ -1,0 +1,70 @@
+{
+  "version": 1,
+  "author": "Gia Anh",
+  "editor": "wokwi",
+  "parts": [
+    { "type": "wokwi-breadboard", "id": "bb1", "top": 169.8, "left": -131.6, "attrs": {} },
+    { "type": "board-esp32-devkit-c-v4", "id": "esp", "top": 163.2, "left": 532.84, "attrs": {} },
+    {
+      "type": "wokwi-led",
+      "id": "led1",
+      "top": 188.4,
+      "left": 234.2,
+      "attrs": { "color": "red", "flip": "1" }
+    },
+    {
+      "type": "wokwi-led",
+      "id": "led2",
+      "top": 188.4,
+      "left": 263,
+      "attrs": { "color": "yellow", "flip": "1" }
+    },
+    {
+      "type": "wokwi-led",
+      "id": "led3",
+      "top": 188.4,
+      "left": 291.8,
+      "attrs": { "color": "limegreen", "flip": "1" }
+    },
+    {
+      "type": "wokwi-resistor",
+      "id": "r1",
+      "top": 224.75,
+      "left": 345.6,
+      "attrs": { "value": "330" }
+    },
+    { "type": "wokwi-slide-switch", "id": "sw1", "top": 225.2, "left": 435.1, "attrs": {} }
+  ],
+  "connections": [
+    [ "esp:TX", "$serialMonitor:RX", "", [] ],
+    [ "esp:RX", "$serialMonitor:TX", "", [] ],
+    [ "bb1:54t.a", "bb1:tn.44", "green", [ "v0" ] ],
+    [ "bb1:48t.e", "bb1:45t.e", "green", [ "v9.6", "h-28.8" ] ],
+    [ "bb1:42t.e", "bb1:48t.e", "green", [ "v19.2", "h57.6" ] ],
+    [ "bb1:39t.e", "bb1:48t.e", "green", [ "v19.2", "h86.4" ] ],
+    [ "r1:1", "bb1:48t.b", "", [ "$bb" ] ],
+    [ "r1:2", "bb1:54t.b", "", [ "$bb" ] ],
+    [ "led1:A", "bb1:38t.b", "", [ "$bb" ] ],
+    [ "led1:C", "bb1:39t.b", "", [ "$bb" ] ],
+    [ "led2:A", "bb1:41t.b", "", [ "$bb" ] ],
+    [ "led2:C", "bb1:42t.b", "", [ "$bb" ] ],
+    [ "led3:A", "bb1:44t.b", "", [ "$bb" ] ],
+    [ "led3:C", "bb1:45t.b", "", [ "$bb" ] ],
+    [ "esp:GND.2", "bb1:tn.50", "black", [ "v0", "h9.6", "v-38.4", "h-153.6", "v38.4" ] ],
+    [ "esp:3V3", "bb1:tp.50", "green", [ "h-28.65", "v-9.6" ] ],
+    [ "esp:25", "bb1:38t.e", "green", [ "v0", "h-38.25", "v67.2", "h-249.6" ] ],
+    [ "esp:26", "bb1:41t.e", "green", [ "h-28.65", "v67.2", "h-230.4" ] ],
+    [ "esp:27", "bb1:44t.e", "green", [ "h-19.05", "v76.8", "h-211.2" ] ],
+    [ "bb1:tp.1", "bb1:bp.1", "green", [ "v0.3", "h-48.8", "v172.8" ] ],
+    [ "bb1:tn.1", "bb1:bn.1", "green", [ "v-0.1", "h-39.2", "v172.8" ] ],
+    [ "bb1:bp.20", "bb1:bp.21", "green", [ "v0" ] ],
+    [ "bb1:bn.20", "bb1:bn.21", "green", [ "v0" ] ],
+    [ "sw1:1", "bb1:58t.e", "", [ "$bb" ] ],
+    [ "sw1:2", "bb1:59t.e", "", [ "$bb" ] ],
+    [ "sw1:3", "bb1:60t.e", "", [ "$bb" ] ],
+    [ "bb1:58t.a", "bb1:tn.47", "green", [ "v0" ] ],
+    [ "bb1:60t.a", "bb1:tp.49", "green", [ "v0" ] ],
+    [ "bb1:59t.a", "esp:33", "green", [ "v-19.2", "h57.6", "v57.6" ] ]
+  ],
+  "dependencies": {}
+}
