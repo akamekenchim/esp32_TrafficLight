@@ -4,7 +4,8 @@
   "editor": "wokwi",
   "parts": [
     { "type": "wokwi-breadboard", "id": "bb1", "top": 169.8, "left": -131.6, "attrs": {} },
-    { "type": "board-esp32-devkit-c-v4", "id": "esp", "top": 163.2, "left": 532.84, "attrs": {} },
+    { "type": "wokwi-breadboard-mini", "id": "bb2", "top": 37, "left": 352.8, "attrs": {} },
+    { "type": "board-esp32-devkit-c-v4", "id": "esp", "top": 163.2, "left": 590.44, "attrs": {} },
     {
       "type": "wokwi-led",
       "id": "led1",
@@ -47,6 +48,14 @@
       "top": 188.4,
       "left": 148.2,
       "attrs": { "color": "limegreen", "flip": "1" }
+    },
+    {
+      "type": "wokwi-photoresistor-sensor",
+      "id": "ldr1",
+      "top": -57.9,
+      "left": 292.1,
+      "rotate": 90,
+      "attrs": {}
     }
   ],
   "connections": [
@@ -72,21 +81,28 @@
     [ "bb1:27t.e", "bb1:48t.e", "green", [ "v19.2", "h201.6" ] ],
     [ "bb1:26t.e", "esp:17", "green", [ "v172.8", "h518.4", "v-144" ] ],
     [ "bb1:29t.e", "esp:16", "green", [ "v163.2", "h480", "v-124.8" ] ],
+    [ "led1:A", "bb1:38t.b", "", [ "$bb" ] ],
+    [ "led1:C", "bb1:39t.b", "", [ "$bb" ] ],
     [ "led2:A", "bb1:41t.b", "", [ "$bb" ] ],
     [ "led2:C", "bb1:42t.b", "", [ "$bb" ] ],
+    [ "led3:A", "bb1:44t.b", "", [ "$bb" ] ],
+    [ "led3:C", "bb1:45t.b", "", [ "$bb" ] ],
     [ "r1:1", "bb1:48t.b", "", [ "$bb" ] ],
     [ "r1:2", "bb1:54t.b", "", [ "$bb" ] ],
     [ "sw1:1", "bb1:58t.e", "", [ "$bb" ] ],
     [ "sw1:2", "bb1:59t.e", "", [ "$bb" ] ],
     [ "sw1:3", "bb1:60t.e", "", [ "$bb" ] ],
-    [ "led1:A", "bb1:38t.b", "", [ "$bb" ] ],
-    [ "led1:C", "bb1:39t.b", "", [ "$bb" ] ],
     [ "led4:A", "bb1:26t.b", "", [ "$bb" ] ],
     [ "led4:C", "bb1:27t.b", "", [ "$bb" ] ],
-    [ "led3:A", "bb1:44t.b", "", [ "$bb" ] ],
-    [ "led3:C", "bb1:45t.b", "", [ "$bb" ] ],
     [ "led5:A", "bb1:29t.b", "", [ "$bb" ] ],
-    [ "led5:C", "bb1:30t.b", "", [ "$bb" ] ]
+    [ "led5:C", "bb1:30t.b", "", [ "$bb" ] ],
+    [ "bb2:4t.e", "bb1:tp.43", "green", [ "v0" ] ],
+    [ "bb2:3t.e", "bb1:tn.42", "green", [ "v0" ] ],
+    [ "bb2:1t.e", "esp:34", "green", [ "v19.2", "h172.8", "v124.8", "h57.45" ] ],
+    [ "ldr1:VCC", "bb2:4t.b", "", [ "$bb" ] ],
+    [ "ldr1:GND", "bb2:3t.b", "", [ "$bb" ] ],
+    [ "ldr1:DO", "bb2:2t.b", "", [ "$bb" ] ],
+    [ "ldr1:AO", "bb2:1t.b", "", [ "$bb" ] ]
   ],
   "dependencies": {}
 }
