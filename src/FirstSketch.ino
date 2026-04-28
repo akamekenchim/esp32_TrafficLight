@@ -1,3 +1,5 @@
+#include "soc/gpio_struct.h"
+#include "soc/gpio_reg.h"
 #define GREEN_LIGHT 27
 #define YELLOW_LIGHT 26
 #define RED_LIGHT 25
@@ -6,7 +8,7 @@
 #define PED_RED 17
 #define LDR_PIN 34
 #define LIGHT_THRESHOLD 300
-#define BUTTON_CHECK_INTERVAL 300
+#define BUTTON_CHECK_INTERVAL 80
 #define LDR_CHECK_INTERVAL 1500
 
 unsigned long lastTime = 0;
@@ -32,18 +34,33 @@ void setup(){
   pinMode(PED_RED, OUTPUT);
   pinMode(PED_GREEN, OUTPUT);
   pinMode(SWITCH_PIN, INPUT_PULLDOWN);
-  digitalWrite(tLights[curLight].pin, HIGH);
-  digitalWrite(PED_RED, HIGH);
+  GPIO.out_w1ts = (1 << GREEN_LIGHT); // turnLight(GREEN_LIGHT, HIGH);
+  GPIO.out_w1ts = (1 << PED_RED); // turnLight(PED_RED, HIGH);
   analogReadResolution(10);
 }
+
+inline bool readPin(uint8_t pin){
+  uint32_t current = GPIO.out;
+  current = ((current >> pin) & 1);
+  return current > 0 ? HIGH : LOW;
+}
 void toggle(uint8_t index){
-  if(digitalRead(tLights[index].pin) == HIGH){
-    digitalWrite(tLights[index].pin, LOW);
+  if(readPin(tLights[index].pin) == HIGH){
+    GPIO.out_w1tc = (1 << tLights[index].pin);
   }
   else{
-    digitalWrite(tLights[index].pin, HIGH);
+    GPIO.out_w1ts = (1 << tLights[index].pin);
   }
 }
+inline void turnLight(uint8_t pin, bool state){
+  if(state == HIGH){
+    GPIO.out_w1ts = (1 << pin);
+  }
+  else{
+    GPIO.out_w1tc = (1 << pin);
+  }
+}
+
 void loop(){
   uint16_t lightValue = prevLightValue;
   unsigned long curTime = millis();
@@ -51,12 +68,12 @@ void loop(){
     bool curState = digitalRead(SWITCH_PIN);
     if(curState == HIGH && lastState == LOW && curLight != NIGHT_MODE){
       lastTime = curTime;
-      digitalWrite(tLights[curLight].pin, LOW);
+      turnLight(tLights[curLight].pin, LOW);
       curLight = RED;
-      digitalWrite(tLights[curLight].pin, HIGH);
+      turnLight(tLights[curLight].pin, HIGH);
       blinkCounter = 0;
-      digitalWrite(PED_RED, LOW);
-      digitalWrite(PED_GREEN, HIGH);
+      turnLight(PED_RED, LOW);
+      turnLight(PED_GREEN, HIGH);
     } 
     lastButtonCheck = curTime;
     lastState = curState;
@@ -66,17 +83,17 @@ void loop(){
     lastLDRRead = curTime;
   }
   if(lightValue > LIGHT_THRESHOLD && prevLightValue <= LIGHT_THRESHOLD){
-    digitalWrite(PED_RED, LOW);
-    digitalWrite(PED_GREEN, HIGH);
-    digitalWrite(tLights[curLight].pin, LOW);
+    turnLight(PED_RED, LOW);
+    turnLight(PED_GREEN, HIGH);
+    turnLight(tLights[curLight].pin, LOW);
     curLight = NIGHT_MODE;
     prevLightValue = lightValue;
   }
   else if(lightValue <= LIGHT_THRESHOLD && prevLightValue > LIGHT_THRESHOLD){
-    digitalWrite(YELLOW_LIGHT, LOW);
-    digitalWrite(GREEN_LIGHT, HIGH);
-    digitalWrite(PED_RED, HIGH);
-    digitalWrite(PED_GREEN, LOW);
+    turnLight(YELLOW_LIGHT, LOW);
+    turnLight(GREEN_LIGHT, HIGH);
+    turnLight(PED_RED, HIGH);
+    turnLight(PED_GREEN, LOW);
     lastTime = curTime;
     curLight = GREEN;
     prevLightValue = lightValue;
@@ -86,9 +103,9 @@ void loop(){
     lastTime = curTime;
   }
 
-  if(curTime - lastTime >= tLights[curLight].duration && curLight != NIGHT_MODE){
+  if(curLight != NIGHT_MODE && curTime - lastTime >= tLights[curLight].duration){
     lastTime = curTime;
-    if(curLight != YELLOW) digitalWrite(tLights[curLight].pin, LOW);
+    if(curLight != YELLOW) turnLight(tLights[curLight].pin, LOW);
     if(curLight == GREEN) curLight = YELLOW;
     else if(curLight == YELLOW && blinkCounter == 6){
       blinkCounter = 0;
@@ -97,18 +114,20 @@ void loop(){
     else if(curLight == RED) curLight = GREEN;
     switch(curLight){
       case RED:
-        digitalWrite(RED_LIGHT, HIGH);
+        turnLight(RED_LIGHT, HIGH); // bật đèn đỏ
         break;
       case YELLOW:
+        turnLight(RED_LIGHT, LOW);
+        turnLight(GREEN_LIGHT, LOW);
         toggle(YELLOW);
         blinkCounter++;
         break;
       case GREEN:
-        digitalWrite(GREEN_LIGHT, HIGH);
+        turnLight(GREEN_LIGHT, HIGH); // bật đèn xanh
         break;
     }
     
-    digitalWrite(PED_RED, (curLight == GREEN) || (curLight == YELLOW));
-    digitalWrite(PED_GREEN, (curLight == RED));
+    turnLight(PED_RED, (curLight == GREEN) || (curLight == YELLOW));
+    turnLight(PED_GREEN, (curLight == RED));
   }
 }
